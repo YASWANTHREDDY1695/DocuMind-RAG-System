@@ -4,7 +4,18 @@ import requests
 import uuid
 
 # Configuration
-API_BASE_URL = os.getenv("API_BASE_URL", "http://127.0.0.1:8000/api")
+API_BASE_URL = "http://127.0.0.1:8000/api"
+try:
+    if "API_BASE_URL" in st.secrets:
+        API_BASE_URL = st.secrets["API_BASE_URL"]
+    elif "api_base_url" in st.secrets:
+        API_BASE_URL = st.secrets["api_base_url"]
+    else:
+        API_BASE_URL = os.getenv("API_BASE_URL", "http://127.0.0.1:8000/api")
+except Exception:
+    API_BASE_URL = os.getenv("API_BASE_URL", "http://127.0.0.1:8000/api")
+
+print(f"DEBUG: Connecting to Backend API at: {API_BASE_URL}")
 
 import re
 
