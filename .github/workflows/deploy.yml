@@ -1,0 +1,42 @@
+name: Auto Deploy to AWS EC2
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    name: Deploy Application
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Execute Remote SSH Commands
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ubuntu
+          key: ${{ secrets.EC2_SSH_KEY }}
+          port: 22
+          script: |
+            # Navigate to project folder
+            cd /home/ubuntu/RAG
+            
+            # Reset and pull latest main branch
+            git fetch --all
+            git reset --hard origin/main
+            
+            # Sync Python dependencies using local uv installation
+            uv pip install -r requirements.txt
+            
+            # Restart backend and frontend systemd processes
+            sudo systemctl restart documind_api.service
+            sudo systemctl restart documind_ui.service
+            
+            # Reload Nginx webserver
+            sudo systemctl reload nginx
+            
+            echo "Auto-deployment successfully completed!"
