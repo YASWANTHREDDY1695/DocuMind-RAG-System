@@ -143,7 +143,7 @@ st.markdown("""
 # ----------------- BACKEND CONNECTIVITY CHECK -----------------
 def check_backend_running():
     try:
-        response = requests.get(f"{API_BASE_URL}/documents", timeout=15)
+        response = requests.get(f"{API_BASE_URL}/documents", timeout=30)
         return response.status_code == 200
     except requests.exceptions.RequestException as e:
         print(f"DEBUG CONNECTION ERROR: {e}")
