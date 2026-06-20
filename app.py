@@ -12,16 +12,21 @@ st.set_page_config(
 )
 
 # Configuration
-API_BASE_URL = "http://127.0.0.1:8000/api"
-try:
-    if "API_BASE_URL" in st.secrets:
-        API_BASE_URL = st.secrets["API_BASE_URL"]
-    elif "api_base_url" in st.secrets:
-        API_BASE_URL = st.secrets["api_base_url"]
-    else:
-        API_BASE_URL = os.getenv("API_BASE_URL", "http://127.0.0.1:8000/api")
-except Exception:
-    API_BASE_URL = os.getenv("API_BASE_URL", "http://127.0.0.1:8000/api")
+API_BASE_URL = os.getenv("API_BASE_URL", "http://127.0.0.1:8000/api")
+
+# Only check st.secrets if we are running in Streamlit Cloud or if a local secrets file exists.
+# This prevents Streamlit from showing a warning banner in the browser when running locally.
+is_cloud = os.getenv("STREAMLIT_RUNTIME_SHARING_MODE") is not None or os.getenv("STREAMLIT_SHARING_ERR_LOG_LEVEL") is not None
+local_secrets_exist = os.path.exists(".streamlit/secrets.toml") or os.path.exists(os.path.expanduser("~/.streamlit/secrets.toml"))
+
+if is_cloud or local_secrets_exist:
+    try:
+        if "API_BASE_URL" in st.secrets:
+            API_BASE_URL = st.secrets["API_BASE_URL"]
+        elif "api_base_url" in st.secrets:
+            API_BASE_URL = st.secrets["api_base_url"]
+    except Exception:
+        pass
 
 print(f"DEBUG: Connecting to Backend API at: {API_BASE_URL}")
 
