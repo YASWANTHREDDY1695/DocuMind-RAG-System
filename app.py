@@ -3,6 +3,14 @@ import streamlit as st
 import requests
 import uuid
 
+# Set page configuration with custom title and layout (MUST be the first Streamlit command)
+st.set_page_config(
+    page_title="DocuMind RAG System",
+    page_icon="🧠",
+    layout="wide",
+    initial_sidebar_state="expanded"
+)
+
 # Configuration
 API_BASE_URL = "http://127.0.0.1:8000/api"
 try:
@@ -30,14 +38,6 @@ def highlight_citations(text: str) -> str:
         page = match.group(2)
         return f" :blue[**[📄 {filename} (P. {page})]**]"
     return re.sub(pattern, repl, text)
-
-# Set page configuration with custom title and layout
-st.set_page_config(
-    page_title="DocuMind RAG System",
-    page_icon="🧠",
-    layout="wide",
-    initial_sidebar_state="expanded"
-)
 
 # Inject custom CSS for premium dark-mode / glassmorphism aesthetic
 st.markdown("""
